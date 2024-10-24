@@ -1,0 +1,43 @@
+# IDE 관련 파일 (IntelliJ IDEA, PyCharm 등)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# 데이터베이스 파일
+*.db
+*.sqlite
+*.sqlite3
+
+# 파이썬 관련 파일
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# 로그 파일
+*.log
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# 임시 파일
+*.tmp
+*.bak
+*.swp
+
+# 개인 설정 파일
+config.ini
+secrets.json
+
+# 빌드 결과물
+build/
+dist/
+*.egg-info/

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오은영 AI박사 고민상담소</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
+</head>
+<body>
+    <div id="chat-container">
+        <div id="chat-header">
+            <h1>오은영 AI박사 고민상담소</h1>
+        </div>
+        <div id="chat-messages">
+            <div class="message bot-message">
+                <div class="message-content">안녕하세요, 무엇을 도와드릴까요?</div>
+                <div class="message-time">12:01 pm</div>
+            </div>
+        </div>
+        <div id="chat-input">
+            <input type="text" id="user-input" placeholder="메시지를 입력하세요">
+            <button id="send-button" onclick="sendMessage()">전송</button>
+        </div>
+        <div id="youtube-recommendations"></div>
+    </div>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const message = input.value;
+            if (!message) return;
+            
+            input.value = '';
+            
+            const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            
+            try {
+                const chatMessages = document.getElementById('chat-messages');
+                chatMessages.innerHTML += `
+                    <div class="message user-message">
+                        <div class="message-content">${message}</div>
+                        <div class="message-time">${currentTime}</div>
+                    </div>`;
+
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('서버 응답 오류');
+                }
+                
+                const data = await response.json();
+                chatMessages.innerHTML += `
+                    <div class="message bot-message">
+                        <div class="message-content">${data.response}</div>
+                        <div class="message-time">${currentTime}</div>
+                    </div>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // 유튜브 추천 영상 요청
+                const youtubeResponse = await fetch('/youtube_recommendations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                });
+
+                if (youtubeResponse.ok) {
+                    const youtubeData = await youtubeResponse.json();
+                    displayYoutubeRecommendations(youtubeData.videos);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('메시지 전송 중 오류가 발생했습니다.');
+            }
+        }
+
+        function displayYoutubeRecommendations(videos) {
+            const recommendationsDiv = document.getElementById('youtube-recommendations');
+            recommendationsDiv.innerHTML = '<h3>관련 유튜브 영상</h3>';
+            videos.forEach(video => {
+                recommendationsDiv.innerHTML += `
+                    <a href="https://www.youtube.com/watch?v=${video.video_id}" target="_blank" class="youtube-video">
+                        <img src="${video.thumbnail}" alt="${video.title}">
+                        <div class="youtube-video-info">
+                            <div class="youtube-video-title">${video.title}</div>
+                            <div class="youtube-video-description">${video.description}</div>
+                        </div>
+                    </a>
+                `;
+            });
+        }
+
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
