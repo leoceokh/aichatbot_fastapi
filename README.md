@@ -1,9 +1,9 @@
-bash
-git clone https://github.com/leoceokh/aichatbot_fastapi.git
-cd aichatbot_fastapi
-python -m venv venv
-source venv/bin/activate # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+bash 
+git clone https://github.com/leoceokh/aichatbot_fastapi.git 
+cd aichatbot_fastapi 
+python -m venv venv 
+source venv/bin/activate # Windows: venv\Scripts\activate 
+pip install -r requirements.txt 
 
 2. 환경설정
 - `.env.example` → `.env` 복사
